@@ -1,0 +1,8 @@
+export GROUP="kubfly"
+export APPLICATION="alt"
+export VERSION="$(git branch --show-current)"
+export REVISION="$(git rev-parse --short HEAD)"
+export DESCRIPTION="ALT Linux"
+export LICENSE="GNU General Public License v3.0"
+export WEB="https://en.altlinux.org"
+export REPOSITORY="https://github.com/kubfly/alt.git"
