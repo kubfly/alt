@@ -15,5 +15,6 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - run: build.sh
-      - run: clean.sh
+      - run: ls
+      - run: ./build.sh
+      - run: ./clean.sh
