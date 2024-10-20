@@ -1,0 +1,68 @@
+ARG REGISTRY_ALT
+
+FROM $REGISTRY_ALT/alt/alt:sisyphus
+
+ARG GROUP
+ARG APPLICATION
+ARG VERSION
+ARG REVISION
+ARG DESCRIPTION
+ARG LICENSE
+ARG WEB
+ARG REPOSITORY
+ARG BUILD
+ARG TARGETOS
+ARG TARGETARCH
+ARG TARGETVARIANT
+
+ENV GROUP="$GROUP"
+ENV APPLICATION="$APPLICATION"
+ENV VERSION="$VERSION"
+ENV REVISION="$REVISION"
+ENV DESCRIPTION="$DESCRIPTION"
+ENV LICENSE="$LICENSE"
+ENV WEB="$WEB"
+ENV REPOSITORY="$REPOSITORY"
+ENV BUILD="$BUILD"
+ENV TARGETOS="$TARGETOS"
+ENV TARGETARCH="$TARGETARCH"
+ENV TARGETVARIANT="$TARGETVARIANT"
+
+LABEL group="$GROUP"
+LABEL application="$APPLICATION"
+LABEL version="$VERSION"
+LABEL revision="$REVISION"
+LABEL description="$DESCRIPTION"
+LABEL license="$LICENSE"
+LABEL web="$WEB"
+LABEL repository="$REPOSITORY"
+LABEL build="$BUILD"
+LABEL targetos="$TARGETOS"
+LABEL targetarch="$TARGETARCH"
+LABEL targetvariant="$TARGETVARIANT"
+
+USER root:root
+WORKDIR /root
+
+COPY --chmod=644 LICENSE /LICENSE
+COPY --chmod=755 bin/clean-alt.sh /bin/clean-alt.sh
+COPY --chmod=755 bin/clean.sh /bin/clean.sh
+COPY --chmod=755 bin/entrypoint-alt.sh /bin/entrypoint-alt.sh
+
+RUN apt-get update\
+ && apt-get remove -y iproute2 libmnl libiptables fakeroot cpio\
+ && rm -rf /root/* /root/.*\
+ && useradd --create-home --home-dir /home/kubfly --shell /bin/bash --uid 1000 --user-group --comment "Service user" kubfly\
+ && rm -rf /home/kubfly/* /home/kubfly/.*\
+ && apt-get install -y which=2.20 curl=8.10.0\
+ && chmod 777 /etc/pki/ca-trust/extracted/openssl\
+ && chmod 777 /etc/pki/ca-trust/extracted/pem\
+ && chmod -R 644 /etc/pki/ca-trust/extracted/openssl/*\
+ && chmod -R 644 /etc/pki/ca-trust/extracted/pem/*\
+ && /bin/clean.sh
+
+USER kubfly:kubfly
+WORKDIR /home/kubfly
+
+ENTRYPOINT ["/bin/entrypoint-alt.sh"]
+CMD ["/bin/bash"]
