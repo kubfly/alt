@@ -15,6 +15,7 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      - run: ls
       - run: ./build.sh
+        env:
+          REGISTRY_ALT: ${{secrets.REGISTRY_ALT}}
       - run: ./clean.sh
